@@ -1,6 +1,7 @@
 const deleteBtn = document.querySelectorAll('.del')
 const todoItem = document.querySelectorAll('span.not')
 const todoComplete = document.querySelectorAll('span.completed')
+const editBtn = document.querySelectorAll('.edit')
 
 Array.from(deleteBtn).forEach((el)=>{
     el.addEventListener('click', deleteTodo)
@@ -12,6 +13,10 @@ Array.from(todoItem).forEach((el)=>{
 
 Array.from(todoComplete).forEach((el)=>{
     el.addEventListener('click', markIncomplete)
+})
+
+Array.from(editBtn).forEach((el)=>{
+    el.addEventListener('click', editTodo)
 })
 
 async function deleteTodo(){
@@ -66,4 +71,17 @@ async function markIncomplete(){
     }catch(err){
         console.log(err)
     }
+}
+
+function editTodo (){
+    const todoItem = this.parentNode;
+    const form = todoItem.querySelector('.inline-form');
+    const editIcon = todoItem.querySelector('.edit');
+    const input = todoItem.querySelector('.inline-input');
+    const todoText = todoItem.querySelector('span')
+
+    form.classList.remove('hidden');
+    editIcon.classList.add('hidden');
+    todoText.classList.add('hidden');
+    input.focus();
 }
