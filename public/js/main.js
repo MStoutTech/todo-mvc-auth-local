@@ -2,6 +2,9 @@ const deleteBtn = document.querySelectorAll('.del')
 const todoItem = document.querySelectorAll('span.not')
 const todoComplete = document.querySelectorAll('span.completed')
 const editBtn = document.querySelectorAll('.edit')
+const filterBtn = document.querySelector('.label-filter')
+const whiteSpace = document
+const destressBtn = document.querySelector('#delete-all-button')
 
 Array.from(deleteBtn).forEach((el)=>{
     el.addEventListener('click', deleteTodo)
@@ -19,19 +22,32 @@ Array.from(editBtn).forEach((el)=>{
     el.addEventListener('click', editTodo)
 })
 
+filterBtn.addEventListener('click', labelListToggle)
+whiteSpace.addEventListener('click', closeDrawer)
+destressBtn.addEventListener('click', clearTodoList)
+
+
 async function deleteTodo(){
     const todoId = this.parentNode.dataset.id
+    const urlParams = new URLSearchParams(window.location.search)
+    const filter = urlParams.get('filter')
+
     try{
         const response = await fetch('todos/deleteTodo', {
             method: 'delete',
             headers: {'Content-type': 'application/json'},
             body: JSON.stringify({
-                'todoIdFromJSFile': todoId
+                'todoIdFromJSFile': todoId,
+                'activeFilter': filter
             })
         })
         const data = await response.json()
         console.log(data)
-        location.reload()
+        if (filter) {
+            window.location.href = `/todos?filter=${filter}`
+        } else {
+            window.location.href = '/todos'
+        }
     }catch(err){
         console.log(err)
     }
@@ -49,7 +65,11 @@ async function markComplete(){
         })
         const data = await response.json()
         console.log(data)
-        location.reload()
+        if (filter) {
+            window.location.href = `/todos?filter=${filter}`
+        } else {
+            window.location.href = '/todos'
+        }
     }catch(err){
         console.log(err)
     }
@@ -67,7 +87,11 @@ async function markIncomplete(){
         })
         const data = await response.json()
         console.log(data)
-        location.reload()
+        if (filter) {
+            window.location.href = `/todos?filter=${filter}`
+        } else {
+            window.location.href = '/todos'
+        }
     }catch(err){
         console.log(err)
     }
@@ -84,4 +108,30 @@ function editTodo (){
     editIcon.classList.add('hidden');
     todoText.classList.add('hidden');
     input.focus();
+}
+
+function labelListToggle () {
+    document.querySelector('.filter-drawer').classList.toggle('hidden')
+}
+
+function closeDrawer (event) {
+    const icon = document.querySelector('.label-filter')
+    const drawer = document.querySelector('.filter-drawer')
+    if (!icon.contains(event.target) && !drawer.contains(event.target)){
+        document.querySelector('.filter-drawer').classList.add('hidden')
+    }
+}
+
+async function clearTodoList () {
+    try{
+        const response = await fetch('todos/clearTodos', {
+            method: 'delete',
+            headers: {'Content-type': 'application/json'},
+        })
+        const data = await response.json()
+        console.log(data)
+        window.location.href = '/todos'
+    }catch(err){
+        console.log(err)
+    }
 }

@@ -18,17 +18,65 @@
             </a>
             </button>
         </header>
+        <!--Page Title-->
         <h1 class="todos-title">Todos</h1>
-        <div class="list-sticky">
+        <div class="center-column filter-options">
+            <p>
+            <span class="filter-text"> 
+                <% if (filter) { %>
+                    <%= labels[filter] %>
+                <% } else { %>
+                    All todos 
+                <% } %>
+            </span>
+            <span class="clickable label-filter">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="icon translate-down">
+                    <g fill="none" stroke="currentColor" stroke-width="25" stroke-linecap="round">
+                        <!-- Top slider -->
+                        <line x1="96" y1="200" x2="214" y2="200" />
+                        <circle cx="256" cy="200" r="42" />
+                        <line x1="298" y1="200" x2="544" y2="200" />
+                        
+                        <!-- Middle slider -->
+                        <line x1="96" y1="320" x2="374" y2="320" />
+                        <circle cx="416" cy="320" r="42" />
+                        <line x1="458" y1="320" x2="544" y2="320" />
+                        
+                        <!-- Bottom slider -->
+                        <line x1="96" y1="440" x2="182" y2="440" />
+                        <circle cx="224" cy="440" r="42" />
+                        <line x1="266" y1="440" x2="544" y2="440" />
+                    </g>
+                </svg>
+            </span>
+            </p>
+            <!-- Filter drawer - hidden by default -->
+            <ul class="filter-drawer hidden">
+                <li><a href="/todos">-- Show All --</a></li>
+                <% Object.entries(labels).forEach( ([emoji, labelName]) => { %>
+                    <li><a href="/todos?filter=<%= emoji %>"><%= emoji %> <%= labelName %></a></li>
+                <% }) %>
+            </ul>
+        </div>
+        <!--list of todos-->
+        <div class="list-sticky center-column">
             <ul>
             <% todos.forEach( el => { %>
-                    <li class='todoItem' data-id='<%=el._id%>'>
-                        <span class='<%= el.completed === true ? 'completed' : 'not'%>'><%= el.todo %></span>
+                    <li class='clickable' data-id='<%=el._id%>'>
+                        <span class='<%= el.completed === true ? 'completed' : 'not'%>'><%= el.label %> <%= el.todo %></span>
+                        <!--Hidden form for editing todos-->
                         <form class="inline-form hidden" action="/todos/editTodo" method="POST">
                             <input type="hidden" name="todoId" value="<%= el._id %>">
+                            <input type="hidden" name="currentFilter" value="<%= filter || '' %>">
+                            <select name="labelEmojiSelect" id="todo-label-edit">
+                                <option value="">--Please choose a label--</option>
+                                <% Object.keys(labels).forEach( emoji => { %>
+                                <option value="<%= emoji %>" <%= el.label ==  emoji ? 'selected' : '' %>><%= emoji %></option>
+                                <% }) %>
+                            </select>
                             <input class="inline-input" type="text" name="todoItem" value="<%= el.todo %>">
                             <button type="submit">Save</button>
-                        </form><!--
+                        </form><!-- End of hidden form
                         --><span class='edit'><svg viewBox="0 0 640 640" fill="currentColor" class="icon translate-down">
                             <path
                                             d="M416.9 85.2L372 130.1L509.9 268L554.8 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64C448.8 64 430.4 71.6 416.9 85.2zM338.1 164L122.9 379.1C112.2 389.8 104.4 403.2 100.3 417.8L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L476 301.9L338.1 164z"
@@ -42,12 +90,22 @@
                     </li>
             <% }) %>    
             </ul>
+            <div class=' <%= left > 10 ? '' : 'hidden' %> '>
+                <button class="destress" id="delete-all-button">De-stress</button>
+            </div>
         </div>
+        <!--Main adding todo form-->
         <div class = "form">
             <h2><%= user.userName %> has <%= left %> things left to do.</h2>
 
             <form action="/todos/createTodo" method='POST'>
                 <input type="text" placeholder="Enter Todo Item" name='todoItem'>
+                <select name="labelEmojiSelect" id="todo-label-emoji-select">
+                    <option value="">--Please choose a label--</option>
+                    <% Object.entries(labels).forEach( ([emoji, labelName]) => { %>
+                    <option value="<%= emoji %>"><%= emoji %> <%= labelName %></option>
+                    <% }) %>
+                </select>
                 <button type="submit" class="button-4">Add Todo</button>
             </form>
         </div>
