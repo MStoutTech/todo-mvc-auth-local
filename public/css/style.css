@@ -346,3 +346,17 @@ button.destress:hover::after {
   height: calc(100% + 1rem);
 }
 
+@keyframes fade-out-up {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+.fade-out-up {
+    animation: fade-out-up 3s ease-in forwards;
+}

@@ -55,12 +55,15 @@ async function deleteTodo(){
 
 async function markComplete(){
     const todoId = this.parentNode.dataset.id
+    const urlParams = new URLSearchParams(window.location.search)
+    const filter = urlParams.get('filter')
     try{
         const response = await fetch('todos/markComplete', {
             method: 'put',
             headers: {'Content-type': 'application/json'},
             body: JSON.stringify({
-                'todoIdFromJSFile': todoId
+                'todoIdFromJSFile': todoId,
+                'activeFilter': filter
             })
         })
         const data = await response.json()
@@ -77,12 +80,15 @@ async function markComplete(){
 
 async function markIncomplete(){
     const todoId = this.parentNode.dataset.id
+    const urlParams = new URLSearchParams(window.location.search)
+    const filter = urlParams.get('filter')
     try{
         const response = await fetch('todos/markIncomplete', {
             method: 'put',
             headers: {'Content-type': 'application/json'},
             body: JSON.stringify({
-                'todoIdFromJSFile': todoId
+                'todoIdFromJSFile': todoId,
+                'activeFilter': filter
             })
         })
         const data = await response.json()
@@ -123,15 +129,23 @@ function closeDrawer (event) {
 }
 
 async function clearTodoList () {
-    try{
-        const response = await fetch('todos/clearTodos', {
-            method: 'delete',
-            headers: {'Content-type': 'application/json'},
-        })
-        const data = await response.json()
-        console.log(data)
-        window.location.href = '/todos'
-    }catch(err){
-        console.log(err)
-    }
+    const allTodos = document.querySelectorAll('li.clickable')
+
+    Array.from(allTodos).forEach((el)=>{
+    el.classList.add('fade-out-up')
+    })
+    
+    setTimeout(async () => {
+        try{
+            const response = await fetch('todos/clearTodos', {
+                method: 'delete',
+                headers: {'Content-type': 'application/json'},
+            })
+            const data = await response.json()
+            console.log(data)
+            window.location.href = '/todos'
+        }catch(err){
+            console.log(err)
+        }
+    }, 2500)
 }
