@@ -1,3 +1,7 @@
+
+![todos-app](https://github.com/user-attachments/assets/8d6ac30c-e0dc-472d-b4dd-b1d56726dfb6)
+
+
 # Introduction
 
 This is forked from a Simple ToDo App built using the MVC Architecture, implementing "authorization" so folx can sign up, customize & personalize the app
